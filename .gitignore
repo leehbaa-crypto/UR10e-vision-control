@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.env
+
+# Large Model Data & Weights (Excluding from GitHub)
+_DATA/
+hamer/_DATA/
+mano_v1_2/models/
+*.ckpt
+*.pth
+*.pkl
+*.h5
+*.tflite
+
+# Large Data Formats
+*.pcd
+*.ply
+*.stl
+*.obj
+*.mtl
+*.tar.gz
+*.zip
+*.7z
+
+# Log & Build files
+*.log
+build/
+devel/
+install/
+.ros/
+
+# Project Specific
+references/zips/
+references/nrs_vision/pcd/
+simulation_mujoco/MUJOCO_LOG.TXT
+
+# OS files
+.DS_Store
+Thumbs.db

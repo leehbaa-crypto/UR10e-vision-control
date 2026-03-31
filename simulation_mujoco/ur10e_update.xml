@@ -1,0 +1,136 @@
+<mujoco model="ur10e_update">
+  <!-- ================= GLOBAL ================= -->
+  <compiler angle="radian" meshdir="./" />
+  <option gravity="0 0 0" timestep="0.01" />
+
+  <!-- ================= DEFAULTS ================= -->
+  <default>
+    <default class="visual">
+      <geom type="mesh" contype="0" conaffinity="0" group="2"
+            material="LightGrey"/>
+    </default>
+    <default class="collision">
+      <geom type="mesh" group="1"
+            material="collision_material"/>
+    </default>
+  </default>
+
+  <!-- ================= ASSETS ================= -->
+  <asset>
+    <material name="LightGrey" rgba="0.7 0.7 0.7 1"/>
+    <material name="Grey" rgba="0.6 0.6 0.6 1"/>
+    <material name="collision_material" rgba="1 0.28 0.1 0.5"/>
+
+    <!-- visual -->
+    <mesh name="base_visual" file="visual/base.obj"/>
+    <mesh name="shoulder_visual" file="visual/shoulder.obj"/>
+    <mesh name="upperarm_visual" file="visual/upperarm.obj"/>
+    <mesh name="forearm_visual" file="visual/forearm.obj"/>
+    <mesh name="wrist1_visual" file="visual/wrist1.obj"/>
+    <mesh name="wrist2_visual" file="visual/wrist2.obj"/>
+    <mesh name="wrist3_visual" file="visual/wrist3.obj"/>
+    <mesh name="spindle_visual" file="visual/nrs_spindle.obj"/>
+
+    <!-- collision -->
+    <mesh name="base_collision" file="collision/base.stl"/>
+    <mesh name="shoulder_collision" file="collision/shoulder.stl"/>
+    <mesh name="upperarm_collision" file="collision/upperarm.stl"/>
+    <mesh name="forearm_collision" file="collision/forearm.stl"/>
+    <mesh name="wrist1_collision" file="collision/wrist1.stl"/>
+    <mesh name="wrist2_collision" file="collision/wrist2.stl"/>
+    <mesh name="wrist3_collision" file="collision/wrist3.stl"/>
+    <mesh name="spindle_collision" file="collision/nrs_spindle.stl"/>
+  </asset>
+
+  <!-- ================= WORLD ================= -->
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="2 2 0.01" material="Grey"/>
+
+    <!-- ================= BASE ================= -->
+    <body name="base_link" pos="0 0 0">
+      <geom mesh="base_visual" class="visual"/>
+      <geom mesh="base_collision" class="collision"/>
+
+      <!-- ================= JOINT 1 ================= -->
+      <body name="shoulder_link" pos="0 0 0.1807">
+        <joint name="shoulder_pan_joint" type="hinge"
+               axis="0 0 1" range="-6.283 6.283"/>
+        <geom mesh="shoulder_visual" class="visual"/>
+        <geom mesh="shoulder_collision" class="collision"/>
+
+        <!-- ================= JOINT 2 ================= -->
+        <body name="upper_arm_link" quat="0.7071 0.7071 0 0">
+          <joint name="shoulder_lift_joint" type="hinge"
+                 axis="0 0 1" range="-6.283 6.283"/>
+          <geom pos="0 0 0.1762"
+                quat="0.5 0.5 -0.5 -0.5"
+                mesh="upperarm_visual" class="visual"/>
+          <geom pos="0 0 0.1762"
+                quat="0.5 0.5 -0.5 -0.5"
+                mesh="upperarm_collision" class="collision"/>
+
+          <!-- ================= JOINT 3 ================= -->
+          <body name="forearm_link" pos="-0.6127 0 0">
+            <joint name="elbow_joint" type="hinge"
+                   axis="0 0 1" range="-3.1416 3.1416"/>
+            <geom pos="0 0 0.0393"
+                  quat="0.5 0.5 -0.5 -0.5"
+                  mesh="forearm_visual" class="visual"/>
+            <geom pos="0 0 0.0393"
+                  quat="0.5 0.5 -0.5 -0.5"
+                  mesh="forearm_collision" class="collision"/>
+
+            <!-- ================= JOINT 4 ================= -->
+            <body name="wrist_1_link" pos="-0.57155 0 0.17415">
+              <joint name="wrist_1_joint" type="hinge"
+                     axis="0 0 1" range="-6.283 6.283"/>
+              <geom pos="0 0 -0.135"
+                    quat="0.7071 0.7071 0 0"
+                    mesh="wrist1_visual" class="visual"/>
+              <geom pos="0 0 -0.135"
+                    quat="0.7071 0.7071 0 0"
+                    mesh="wrist1_collision" class="collision"/>
+
+              <!-- ================= JOINT 5 ================= -->
+              <body name="wrist_2_link" pos="0 -0.11985 0"
+                    quat="0.7071 0.7071 0 0">
+                <joint name="wrist_2_joint" type="hinge"
+                       axis="0 0 1" range="-6.283 6.283"/>
+                <geom pos="0 0 -0.12"
+                      mesh="wrist2_visual" class="visual"/>
+                <geom pos="0 0 -0.12"
+                      mesh="wrist2_collision" class="collision"/>
+
+                <!-- ================= JOINT 6 ================= -->
+                <body name="wrist_3_link" pos="0 0.11655 0"
+                      quat="0.7071 -0.7071 0 0">
+                  <joint name="wrist_3_joint" type="hinge"
+                         axis="0 0 1" range="-6.283 6.283"/>
+                  <geom pos="0 0 -0.1168"
+                        quat="0.7071 0.7071 0 0"
+                        mesh="wrist3_visual" class="visual"/>
+                  <geom pos="0 0 -0.1168"
+                        quat="0.7071 0.7071 0 0"
+                        mesh="wrist3_collision" class="collision"/>
+
+                  <!-- ================= TOOL ================= -->
+                  <body name="spindle_link" quat="0.5 -0.5 -0.5 -0.5">
+                    <geom pos="0 0 0.18"
+                          mesh="spindle_visual"
+                          class="visual"
+                          material="Grey"/>
+                    <geom pos="0 0 0.18"
+                          mesh="spindle_collision"
+                          class="collision"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
+

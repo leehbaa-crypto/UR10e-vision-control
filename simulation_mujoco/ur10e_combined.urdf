@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<robot name="ur10e">
+  <link name="world"/>
+  
+  <ros2_control name="ur10e" type="system">
+    <hardware><plugin>ur_robot_driver/URPositionHardwareInterface</plugin></hardware>
+    <joint name="shoulder_pan_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="shoulder_lift_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">-1.57</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="elbow_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="wrist_1_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">-1.57</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="wrist_2_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+    <joint name="wrist_3_joint"><command_interface name="position"/><state_interface name="position"><param name="initial_value">0.0</param></state_interface><state_interface name="velocity"/></joint>
+  </ros2_control>
+
+  <link name="base_link"/>
+  <link name="base_link_inertia">
+    <visual>
+      <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
+      <geometry><mesh filename="visual/base.obj"/></geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
+      <geometry><mesh filename="collision/base.stl"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="4.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0061063308908" ixy="0.0" ixz="0.0" iyy="0.0061063308908" iyz="0.0" izz="0.01125"/>
+    </inertial>
+  </link>
+  
+  <link name="shoulder_link">
+    <visual><geometry><mesh filename="visual/shoulder.obj"/></geometry></visual>
+    <collision><geometry><mesh filename="collision/shoulder.stl"/></geometry></collision>
+    <inertial><mass value="7.369"/><origin rpy="1.5708 0 0" xyz="0.021 -0.027 0.0"/><inertia ixx="0.034" ixy="0" ixz="0" iyy="0.035" iyz="0" izz="0.021"/></inertial>
+  </link>
+  
+  <link name="upper_arm_link">
+    <visual><origin rpy="1.5708 0 -1.5708" xyz="0 0 0.1762"/><geometry><mesh filename="visual/upperarm.obj"/></geometry></visual>
+    <collision><origin rpy="1.5708 0 -1.5708" xyz="0 0 0.1762"/><geometry><mesh filename="collision/upperarm.stl"/></geometry></collision>
+    <inertial><mass value="13.051"/><origin rpy="0 0 0" xyz="-0.2327 0.0 0.158"/><inertia ixx="0.028" ixy="0" ixz="0" iyy="0.770" iyz="0" izz="0.769"/></inertial>
+  </link>
+  
+  <link name="forearm_link">
+    <visual><origin rpy="1.5708 0 -1.5708" xyz="0 0 0.0393"/><geometry><mesh filename="visual/forearm.obj"/></geometry></visual>
+    <collision><origin rpy="1.5708 0 -1.5708" xyz="0 0 0.0393"/><geometry><mesh filename="collision/forearm.stl"/></geometry></collision>
+    <inertial><mass value="3.989"/><origin rpy="0 0 0" xyz="-0.3315 0.0 0.068"/><inertia ixx="0.010" ixy="0" ixz="0" iyy="0.309" iyz="0" izz="0.306"/></inertial>
+  </link>
+  
+  <link name="wrist_1_link">
+    <visual><origin rpy="1.5708 0 0" xyz="0 0 -0.135"/><geometry><mesh filename="visual/wrist1.obj"/></geometry></visual>
+    <collision><origin rpy="1.5708 0 0" xyz="0 0 -0.135"/><geometry><mesh filename="collision/wrist1.stl"/></geometry></collision>
+    <inertial><mass value="2.1"/><origin rpy="1.5708 0 0" xyz="0.0 -0.018 0.007"/><inertia ixx="0.0029" ixy="0" ixz="0" iyy="0.0022" iyz="0" izz="0.0025"/></inertial>
+  </link>
+  
+  <link name="wrist_2_link">
+    <visual><origin rpy="0 0 0" xyz="0 0 -0.12"/><geometry><mesh filename="visual/wrist2.obj"/></geometry></visual>
+    <collision><origin rpy="0 0 0" xyz="0 0 -0.12"/><geometry><mesh filename="collision/wrist2.stl"/></geometry></collision>
+    <inertial><mass value="1.98"/><origin rpy="-1.5708 0 0" xyz="0.0 0.018 -0.007"/><inertia ixx="0.0029" ixy="0" ixz="0" iyy="0.0022" iyz="0" izz="0.0025"/></inertial>
+  </link>
+  
+  <link name="wrist_3_link">
+    <visual><origin rpy="1.5708 0 0" xyz="0 0 -0.1168"/><geometry><mesh filename="visual/wrist3.obj"/></geometry></visual>
+    <collision><origin rpy="1.5708 0 0" xyz="0 0 -0.1168"/><geometry><mesh filename="collision/wrist3.stl"/></geometry></collision>
+    <inertial><mass value="0.615"/><origin rpy="0 0 0" xyz="0.0 0.0 -0.026"/><inertia ixx="0.0004" ixy="0" ixz="0" iyy="0.0004" iyz="0" izz="0.0003"/></inertial>
+  </link>
+
+  <joint name="base_joint" type="fixed"><origin rpy="0 0 0" xyz="0 0 0"/><parent link="world"/><child link="base_link"/></joint>
+  <joint name="base_link-base_link_inertia" type="fixed"><parent link="base_link"/><child link="base_link_inertia"/><origin rpy="0 0 3.141592653589793" xyz="0 0 0"/></joint>
+  <joint name="shoulder_pan_joint" type="revolute"><parent link="base_link_inertia"/><child link="shoulder_link"/><origin rpy="0 0 0" xyz="0 0 0.1807"/><axis xyz="0 0 1"/><limit effort="330.0" lower="-6.28" upper="6.28" velocity="2.09"/><dynamics damping="0" friction="0"/></joint>
+  <joint name="shoulder_lift_joint" type="revolute"><parent link="shoulder_link"/><child link="upper_arm_link"/><origin rpy="1.570796327 0 0" xyz="0 0 0"/><axis xyz="0 0 1"/><limit effort="330.0" lower="-6.28" upper="6.28" velocity="2.09"/><dynamics damping="0" friction="0"/></joint>
+  <joint name="elbow_joint" type="revolute"><parent link="upper_arm_link"/><child link="forearm_link"/><origin rpy="0 0 0" xyz="-0.6127 0 0"/><axis xyz="0 0 1"/><limit effort="150.0" lower="-3.14" upper="3.14" velocity="3.14"/><dynamics damping="0" friction="0"/></joint>
+  <joint name="wrist_1_joint" type="revolute"><parent link="forearm_link"/><child link="wrist_1_link"/><origin rpy="0 0 0" xyz="-0.57155 0 0.17415"/><axis xyz="0 0 1"/><limit effort="54.0" lower="-6.28" upper="6.28" velocity="3.14"/><dynamics damping="0" friction="0"/></joint>
+  <joint name="wrist_2_joint" type="revolute"><parent link="wrist_1_link"/><child link="wrist_2_link"/><origin rpy="1.570796327 0 0" xyz="0 -0.11985 0"/><axis xyz="0 0 1"/><limit effort="54.0" lower="-6.28" upper="6.28" velocity="3.14"/><dynamics damping="0" friction="0"/></joint>
+  <joint name="wrist_3_joint" type="revolute"><parent link="wrist_2_link"/><child link="wrist_3_link"/><origin rpy="1.5708 3.1416 3.1416" xyz="0 0.11655 0"/><axis xyz="0 0 1"/><limit effort="54.0" lower="-6.28" upper="6.28" velocity="3.14"/><dynamics damping="0" friction="0"/></joint>
+
+  <link name="ft_frame"/>
+  <joint name="wrist_3_link-ft_frame" type="fixed"><parent link="wrist_3_link"/><child link="ft_frame"/><origin rpy="3.1416 0 0" xyz="0 0 0"/></joint>
+  
+  <link name="flange"/>
+  <joint name="wrist_3-flange" type="fixed"><parent link="wrist_3_link"/><child link="flange"/><origin rpy="0 -1.5708 -1.5708" xyz="0 0 0"/></joint>
+  
+  <link name="tool0"/>
+  <joint name="flange-tool0" type="fixed"><origin rpy="1.5708 0 1.5708" xyz="0 0 0"/><parent link="flange"/><child link="tool0"/></joint>
+  
+  <link name="spindle_link">
+    <visual><origin rpy="0 0 0" xyz="0 0 0"/><geometry><mesh filename="visual/nrs_spindle.obj"/></geometry><material name="Grey"><color rgba="0.6 0.6 0.6 1.0"/></material></visual>
+    <collision><origin rpy="0 0 0" xyz="0 0 0"/><geometry><mesh filename="collision/nrs_spindle.stl"/></geometry></collision>
+    <inertial><origin rpy="0 0 0" xyz="0 0 0.09"/><mass value="0.5"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+  </link>
+  <joint name="tool0_to_spindle" type="fixed"><parent link="tool0"/><child link="spindle_link"/><origin rpy="0 0 0" xyz="0 0 0"/></joint>
+  
+  <link name="tcp_link"/>
+  <joint name="spindle_to_tcp" type="fixed"><parent link="spindle_link"/><child link="tcp_link"/><origin rpy="0 0 0" xyz="0 0 0.18"/></joint>
+  
+  <link name="workpiece_link">
+    <visual><material name="blue_transparent"><color rgba="0.0 0.0 1.0 0.5"/></material><geometry><mesh filename="workpiece.stl" scale="1 1 1"/></geometry></visual>
+    <collision><geometry><mesh filename="workpiece.stl" scale="1 1 1"/></geometry></collision>
+    <inertial><mass value="10.0"/><origin xyz="0 0 0"/><inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/></inertial>
+  </link>
+  <joint name="world_to_workpiece" type="fixed"><parent link="world"/><child link="workpiece_link"/><origin xyz="0.0 0.0 0.0" rpy="0 0 0"/></joint>
+</robot>

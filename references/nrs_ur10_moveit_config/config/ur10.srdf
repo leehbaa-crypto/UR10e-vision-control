@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot name="ur10_robot">
+
+  <!-- 그룹: 기본 팔 그룹을 tool0 대신 polish_tool_link까지로 확장 -->
+  <group name="manipulator">
+    <!-- 툴팁까지 플래닝하려면 tip_link를 polish_tool_link로 설정 -->
+    <chain base_link="base_link" tip_link="polish_tool_link"/>
+    <!-- 만약 예전처럼 tool0를 tip으로 쓰고 싶으면 위 라인을
+         <chain base_link="base_link" tip_link="tool0"/> 로 바꿔라잉 -->
+  </group>
+
+  <!-- 엔드이펙터 그룹: ur10_tooltip.xacro가 만드는 링크 이름 기준 -->
+  <group name="polish_tool_group">
+    <link name="polish_tool_link"/>
+  </group>
+
+  <!-- 엔드이펙터 정의: tool0에 붙은 EE라고 명시 -->
+  <end_effector
+      name="polish_tool_eef"
+      parent_link="tool0"
+      group="polish_tool_group"
+      parent_group="manipulator"/>
+
+  <!-- 프리셋 포즈들 -->
+  <group_state name="home" group="manipulator">
+    <joint name="elbow_joint" value="0"/>
+    <joint name="shoulder_lift_joint" value="0"/>
+    <joint name="shoulder_pan_joint" value="0"/>
+    <joint name="wrist_1_joint" value="0"/>
+    <joint name="wrist_2_joint" value="0"/>
+    <joint name="wrist_3_joint" value="0"/>
+  </group_state>
+
+  <group_state name="up" group="manipulator">
+    <joint name="elbow_joint" value="0"/>
+    <joint name="shoulder_lift_joint" value="-1.5707"/>
+    <joint name="shoulder_pan_joint" value="0"/>
+    <joint name="wrist_1_joint" value="-1.5707"/>
+    <joint name="wrist_2_joint" value="0"/>
+    <joint name="wrist_3_joint" value="0"/>
+  </group_state>
+
+  <!-- 베이스는 월드에 고정 -->
+  <virtual_joint name="fixed_base" type="fixed" parent_frame="world" child_link="base_link"/>
+
+  <!-- 충돌 비활성화: 기본 UR10 인접 링크 + 툴팁 인접 처리 -->
+  <disable_collisions link1="base_link_inertia" link2="shoulder_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link_inertia" link2="upper_arm_link" reason="Never"/>
+  <disable_collisions link1="base_link_inertia" link2="wrist_1_link" reason="Never"/>
+  <disable_collisions link1="forearm_link" link2="upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="forearm_link" link2="wrist_1_link" reason="Adjacent"/>
+  <disable_collisions link1="shoulder_link" link2="upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="shoulder_link" link2="wrist_1_link" reason="Never"/>
+  <disable_collisions link1="shoulder_link" link2="wrist_2_link" reason="Never"/>
+  <disable_collisions link1="wrist_1_link" link2="wrist_2_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_1_link" link2="wrist_3_link" reason="Never"/>
+  <disable_collisions link1="wrist_2_link" link2="wrist_3_link" reason="Adjacent"/>
+
+  <!-- 툴팁은 tool0에 바로 붙는 인접 링크라 충돌 끄기 -->
+  <disable_collisions link1="tool0" link2="polish_tool_link" reason="Adjacent"/>
+
+  <!-- 네 URDF에 table, workpiece를 같은 트리로 붙여놨다면, 필요시 추가로 끄기
+       환경과 로봇 충돌을 체크하고 싶으면 이 두 줄은 빼도 됨 -->
+  <!-- <disable_collisions link1="base_link" link2="table" reason="Adjacent"/> -->
+  <!-- <disable_collisions link1="polish_tool_link" link2="workpiece" reason="Never"/> -->
+
+</robot>

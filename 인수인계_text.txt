@@ -1,0 +1,473 @@
+인수인계
+시스템 실행 패키지
+
+nrs_solution
+
+0. 로봇 실행
+Teaching Pendant에서 로봇 프로그램 → 프로그램 로드 → nrs_hand_tracking.urp → 첨부 사진대로 화
+면이 나와야함.
+
+1. 패키지 실행
+패키지: nrs_solution
+노드 이름: nrs_node_central_FSM
+roslaunch nrs_solution nrs_node_central_FSM
+처음 상태는 항상 standby
+/hand_gesture
+
+토픽에서
+
+Left:제스처,Right:제스처
+
+문자열을 받아 상태를 전환함
+
+같은 제스처가 약 3초 이상 유지되어야 동작 인정
+
+2. standby 모드
+왼손은 항상 paper , 오른손 제스처로 모드 선택
+
+인수인계
+
+1
+
+왼손
+
+오른손
+
+진입 모드
+
+paper
+
+paper
+
+스캔 모드 scan
+
+paper
+
+pointing
+
+디스크리트 티칭 discrete_teach
+
+paper
+
+scissors
+
+컨티뉴어스 티칭 continuous_teach
+
+paper
+
+rock
+
+팔로우 모드 follow
+
+paper
+
+okay
+
+경로 계획 모드 path_planning
+
+3. Scan 모드
+왼손
+
+오른손
+
+기능
+
+관련 source
+
+""
+
+pointing
+
+현재 카메라가 보고 있
+는 뷰를 포인트클라우드
+로 스캔
+
+nrs_vision/nrs_node_capture.cpp
+
+""
+
+scissors
+
+registration +
+reconstruction 실행
+후 종료, standby로 복
+귀
+
+""
+
+rock
+
+스캔 중단, standby로
+복귀
+
+""
+
+paper
+
+로봇이 손을 tracking
+하며 이동
+
+nrs_vision/nrs_node_registration.cpp,
+nrs_vision/nrs_node_reconstruction
+
+사용법: 오른손으로 로봇을 이동시키며 스캔하고 싶은 뷰포인트에서 “pointing” 제스처를 취한다.
+여러 뷰포인트에서 스캔을 진행한 후, “Scissors” 제스처를 이용해 스캔한 pointcloud들을
+Registration 및 Reconstruction하여 Mesh 형태로 변환한다. 변환된 Mesh는
+/home/nrs/catkin_ws/src/nrs_vision/mesh/workpiece.stl 과
+/home/nrs/catkin_ws/src/nrs_path/mesh/workpiece.stl 로 저장된다
+
+.
+
+이후 자동으로 로봇이 standby 모드로 복귀하게 된다.
+
+4. Discrete Teaching 모드
+왼손
+
+오른손
+
+기능
+
+관련 source
+
+""
+
+pointing
+
+디스크리트 티칭 포인
+트 저장
+
+nrs_solution/nrs_node_discrete_teaching.py
+
+""
+
+rock
+
+티칭 종료, standby
+로 복귀
+
+""
+
+paper
+
+로봇이 손을
+tracking하며 이동
+
+사용법: 오른손으로 로봇을 이동시키며 경로점을 지정하고 싶은 점에서 “pointing”제스처를 3초 이상 취
+한다. 로봇을 다시 이동시킬 때는 손을 펼쳐 “paper” 제스처를 취한다.
+
+여러 경로점을 지정 후 “rock”제스처를 취하여 standby 모드로 복귀한다.
+경로점은 /home/nrs/catkin_ws/src/nrs_path/data/selected_waypoints.txt 에 저장이 된다.
+
+인수인계
+
+2
+
+5. Continuous Teaching 모드
+왼손
+
+오른손
+
+기능
+
+관련 source
+
+""
+
+pointing
+
+연속 티칭 중 현재
+손 위치 저장
+
+nrs_solution/nrs_node_continuous_teaching.py
+
+""
+
+rock
+
+""
+
+paper
+
+티칭 종료, 보간
+
+수행 후 standby
+로 복귀
+로봇이 손을
+tracking하며 이
+동
+
+사용법: 오른손으로 로봇을 이동시키며 연속적인 경로를 티칭하기 위해 “pointing”제스처를 취하며 연속
+적으로 경로를 티칭한다. 이후 “rock” 제스처를 취하여 종료한다.
+
+경로점은 home/nrs/catkin_ws/src/nrs_path/data/continuous_teaching_waypoints.txt 에 저장된다.
+
+6. Follow 모드
+왼손
+
+오른손
+
+기능
+
+""
+
+rock
+
+팔로우 모드 종료, standby 복귀
+
+""
+
+paper
+
+로봇이 손을 tracking하며 이동
+
+단순히 로봇을 움직이는 기능을 테스트하기 위한 모드. 쓸 일 없음.
+
+7. Path Planning 모드
+왼손
+
+오른손
+
+기능
+
+관련 source
+
+""
+
+pointing
+
+디스크리트 포인트 기반 경로 생성
+및 시뮬레이션
+
+nrs_path/path_planning.launch
+
+""
+
+scissors
+
+연속 포인트 기반 경로 생성 및 시뮬
+레이션
+
+nrs_path/path_planning.launch
+
+okay
+
+okay
+
+Playback 실행
+
+rtde_handarm/nrs_ur10.launch
+
+""
+
+rock
+
+경로 계획 모드 종료, standby 복귀
+
+사용법: Discrete Teaching, Continuous Teaching 모드로 티칭한 경로점들을 이용해 실제 가공 경로
+를 생성한다.
+오른손으로 “pointing” 제스처를 취하면 discrete teaching 모드로 티칭한 경로점들을 잇는 geodesic
+가공 경로가 생성되어 다음 경로에 저장된다.
+/home/nrs/catkin_ws/src/nrs_path/data/final_waypoints.txt
+/home/nrs/rtde_ws/src/rtde_handarm/src/Control_data/Hand_G_recording.txt
+
+오른손으로 “scissors” 제스처를 취하면 continuous teachin 모드로 티칭한 경로들으 매끄럽게
+interpolation하여 geodesic 가공 경로가 다음 경로에 저장된다.
+/home/nrs/catkin_ws/src/nrs_path/data/final_waypoints.txt
+
+인수인계
+
+3
+
+/home/nrs/rtde_ws/src/rtde_handarm/src/Control_data/Hand_G_recording.txt
+
+roslaunch rtde_handarm nrs_ur10.launch
+
+실행 이후
+
+왼손 오른손을 둘 다 “okay” 제스처를 취하면 3개의 service가 순차적으로 callback된다.
+Iteration_set → Playback_execution → Playback_execution
+로봇이 폴리싱을 시작한다.
+
+nrs_mcp
+LLM과 nrs_solution을 연동하기 위한 패키지
+사용방법
+총 terminal 창이 4개 필요합니다.
+
+1. roscore
+2. rosrun nrs_mcp central_supervisor_node : 중앙 관제 노드(상황에 맞춰 nrs_vision, nrs_path,
+nrs_hand 등의 패키지들을 실행)
+3. roslaunch rosbridge_server rosbridge_websocket.launch : gemini와 ros를 통신하게 해주는 bridge
+4. gemini -y : gemini를 실행하되, yolo mode(관리자 권한을 갖고 있는 모드)로 실행한다.
+/home/nrs/ros-mcp-server/
+
+디렉토리 안에서 실행(중요!!!!)
+
+5. gemini 창 안에서 gemini와 대화하면서 polishing을 하고 싶다고 말하면 전체 순서에 대해서 안내해준
+다.
+주의 사항
+
+3D Scan → Waypoints Teaching → Path Planning → Polishing 순서대로 진행할 때, 각 순서에서 통
+신을 담당하는 주체가 달라집니다. 상황에 따라서 Teaching Pendant를 조작해줘야합니다.
+3D Scan 과정에서는 Teaching Pendant의 다음 버튼이 눌러져서 활성화되어야합니다.
+
+인수인계
+
+4
+
+Waypoints Teaching에서는 반대로 다음 버튼이 비활성화되어야합니다.
+
+이후 과정에서는 추가적인 버튼 조작이 상관 없습니다.
+시스템 구성
+가장 중요한 것은 /ros-mcp-server/GEMINI.md , /ros-mcp-server/prompts/scan.md , /ros-mcpserver/prompts/environments.md
+
+로봇이 어떻게 움직여야하는지, 이 전체 프레임워크가 어떤지에 대한 설명이 되어있다. gemini가 이 프
+롬프트를 읽고 전체 프로세스를 진행시키기 때문에, 프로세스 내에서 수정 사항이 있다면 이걸 수정하면
+된다.
+예시로 로봇이 물체를 스캔할 때, 스캔 경로가 scan.md 내에 지정되어있는데, 이걸 수정하면 로봇이 다른
+경로로 물체를 스캔한다.
+
+실제 기능들을 수행하는 패키지
+
+nrs_vision
+
+3D Scan, Registration, Reconstruction 관련 패키지
+사실 카메라 성능이 좀 구려서 복잡하거나, 검은색, 투명색 물체는 스캔이 잘 안됩니다. 그냥 Fender만 스캔
+해서 사용할거면 nrs_vision/config/params.yaml 의 기본값을 사용하면 됩니다.
+만약 다른 물체를 스캔하고 싶다면 다음 파라미터를 튜닝해야합니다.
+hand_eye_calibration: //카메라와 end effector 사이의 calibration 값. 건드
+릴 일 없음.
+
+인수인계
+
+5
+
+- 0.0237089
+- -0.0318342
+- -0.00866786
+- -0.000226779
+- -0.174651
+- 0.0580134
+
+minrange: //관심 영역 설정값. 차례대로 X, Y, Z, Scale. 기준점은 다음 사진과
+같다. xyz의 min max 사이의 영역만 결과로 뽑아내게 된다.
+- 0.0
+- -0.1
+- 0.0
+- 1.0
+maxrange:
+- 0.8
+- 1.0
+- 0.5
+- 1.0
+
+downsampleparam: # point cloud의 밀도를 낮추는 파라미터. m 단위. 0.003m의
+정육면체 안에는 하나의 점만 남겨두는 식으로 밀도를 낮춤
+- 0.003
+
+sor_mean: #Statistical Outlier Remove filter// the number of nearest n
+eighbors to use for mean distance estimation.
+- 100
+sor_thresh: #Statistical Outlier Reomve filter// Set the standard devi
+ation multiplier for the distance threshold calculation
+- 1.0
+
+인수인계
+
+6
+
+ror_radius: #Radius Oulier remove filter// The radius of the sphere fo
+r nearest neighbor searching
+- 0.05
+ror_neighbor: #Radius Oulier remove filter// Set the number of neighbo
+rs that need to be present in order to be classified as an inlier.
+- 300
+
+smoothing_radius:
+- 0.05
+
+relative_alpha:
+- 80
+relative_offset:
+- 1000
+
+bilateral_k: #size of neighborhood. The bigger the smoother the result
+will be.
+- 100
+bilateral_sharpness_angle: # control sharpness of the result.
+- 60
+bilateral_iter_number: # number of times the projection is applied
+- 30
+
+nrs_path
+Path Planning 관련 패키지
+main 코드는 nrs_node_path_generation.cpp
+코드 작동 순서
+
+1. discrete waypoint ( /home/nrs/catkin_ws/src/nrs_path/data/selected_waypoints.txt ) 혹은 continuous
+waypoint ( /home/nrs/catkin_ws/src/nrs_path/data/interpolated_continuous_waypoints.txt )를 불러온다.
+2. 점들을 잇는 geodesic 경로를 1차적으로 생성하여 저장한다.
+/home/nrs/catkin_ws/src/nrs_path/data/geodesic_waypoints.txt
+
+3. geodeisc 경로를 interpolation하여 부드럽게 하고, 가공 normal vector, 및 가공 Force를 할당하여
+최종 제어용 파일을 저장한다. /home/nrs/catkin_ws/src/nrs_path/data/final_waypoints.txt ,
+/home/nrs/rtde_ws/src/rtde_handarm/src/Control_data/Hand_G_recording.txt
+
+메인 파라미터
+
+nrs_node_path_generation.cpp 안에 조절할 수 있는 주요 파라미터들이 있다.
+=0.00004 제어점들 사이의 간격을 조절하는 파라미터. 이 값이 커지면
+로봇이 실제 폴리싱하는 속도가 빨라진다. 이 값이 작아지면 로봇이 느리게 폴리싱한다.
+callback_handler.desired_interval
+
+callback_handler.Fz = 10.0
+
+인수인계
+
+실제 힘 제어를 하기 위한 N 단위의 힘.
+
+7
+
+호출 가능 서비스 목록
+
+: discrete waypoints를 곡선 경로로 잇도록 하는 서비스. 곡률은 다음과 같이 조절 가능.
+nrs_geodesic.cpp 내의 501번째 줄 float c=0.1 값을 조절. (이건 좀 번거롭게 한 점 ㅈㅅ)
+spline
+
+straight
+
+: discrete waypoints들을 직선 경로로 잇도록 하는 서비스
+
+continuous
+
+: continuous waypoints를 깔끔하게 geodesic 경로로 변환하는 서비스
+
+interpolate : spline 혹은 straight 혹은 continuous 서비스로 1차적으로 생성된 geodesic 경로에
+normal vector랑 힘 값을 할당해서 최종 힘 제어용 txt 파일로 만들어내는 서비스
+
+nrs_hand
+Hand Tracking(Visual Servoing), Gesture 인식 관련 패키지
+다른 패키지들과는 달리 이 패키지를 단독으로 실행시킬 일은 없습니다. nrs_solution , nrs_mcp 등 시스템을
+통제하는 패키지에서 자동으로 이 패키지를 포함시켜 사용합니다.
+주요 기능
+
+1. nrs_node_hand_tracking.cpp : 사용자의 손의 pose를 추정하여 visual servoing을 하는
+nrs_node_visual_servoing.cpp 로 손의 pose를 topic으로 전달, 검지 끝이 가리키는 점을 topic으로 전달
+2. p7 nrs_node_hand_gesture.cpp : 사용자 손의 제스처를 인식해서 현재 왼손 오른손이 어떤 제스처인지 파
+악해서 이 값을 nrs_solution 패키지의 nrs_node_central_FSM.cpp 로 전달. 이러면 FSM(Finite State
+Machine)에서 넘어온 토픽 값을 이용해서 여러가지 모드 사이를 전환한다.
+
+시각화 및 Moveit 등 보조 패키지
+
+nrs_robot
+
+Moveit, UR Robot Driver 관련 패키지
+
+nrs_ur10_moveit_config
+
+Moveit, Gazebo, RVIZ 상에서 UR10을 불러오기 위한 URDF, Config 파일들이 들어있는 패키지
+
+인수인계
+
+8
+
+
