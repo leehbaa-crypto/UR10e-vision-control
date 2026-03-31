@@ -43,7 +43,7 @@ pip install pyrealsense2==2.53.1.* mediapipe mujoco open3d opencv-python
 ├── mp_hand_tracking/       # 비전 모듈 (MediaPipe 기반)
 │   └── realsense_mediapipe_v7.py      # [Main] L515 트래킹 노드
 ├── simulation_mujoco/      # 시뮬레이션 환경 (UR10e 모델링)
-│   ├── ros2_mujoco_pure.py            # MuJoCo-ROS 2 브릿지
+│   ├── ros2_mujoco_pure_v5.py            # MuJoCo-ROS 2 브릿지
 │   └── ur10e_update.xml               # 로봇/작업대 시뮬레이션 에셋
 ├── references/             # [Optional] 이전 연구 자료 및 PCD 데이터
 └── docs/                   # 인수인계 문서 (인수인계.pdf 등)
@@ -71,10 +71,10 @@ pip install pyrealsense2==2.53.1.* mediapipe mujoco open3d opencv-python
 ---
 
 ## 🎮 운용 모드 및 제스처
-- **STANDBY:** 로봇 대기 상태.
-- **FOLLOWING:** 사용자의 검지 끝을 따라 로봇이 실시간 이동.
-- **TEACHING:** 궤적 기록 모드 (특정 제스처 시 시작).
-- **PLAYBACK:** 기록된 궤적 반복 수행 (폴리싱 작업).
+- **IDLE:** 로봇 대기 상태. (양손 보)
+- **FOLLOWING:** 사용자의 검지 끝을 따라 로봇이 실시간 이동. (좌:paper 우:rock)
+- **ESTOP:** 긴급정지 (양손 주먹).
+- **DEBUG:** 기록된 궤적 반복 수행 (폴리싱 작업).
 
 ---
 
